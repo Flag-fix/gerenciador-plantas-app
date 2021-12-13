@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     },
     animation:{
         backgroundColor: "transparent"
-        ,width: "200"
-        ,height: "200"
+        ,width: 200
+        ,height: 200
     }
 
 })

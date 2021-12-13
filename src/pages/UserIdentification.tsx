@@ -9,8 +9,11 @@ import {
     TextInput,
     KeyboardAvoidingView
     , Platform,
-    Keyboard
+    Keyboard,
+    Alert
 } from "react-native";
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Button } from '../components/Button';
 
@@ -38,8 +41,16 @@ export function UserIdentification() {
         setName(value)
     }
 
-    function handleSubimit() {
-        navigation.navigate('Confirmation')
+    async function handleSubimit() {
+        if(!name) return Alert.alert(`Me diz como chamar você 😢`)
+
+        try {
+            await AsyncStorage.setItem('@plantmanager:user', name);
+            navigation.navigate('Confirmation')
+        } catch {
+            Alert.alert('Não foi possivel salvar o seu nome.')
+        }
+
     }
 
 
