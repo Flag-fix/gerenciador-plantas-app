@@ -25,7 +25,7 @@ interface EnviromentProps {
 export function PlantSelect() {
     const [environment, setEnviroment] = useState<EnviromentProps[]>([]);
     const [plants, setPlants] = useState<PlantProps[]>([]);
-    const [filteredPlants, setfilteredPlants] = useState<PlantProps[]>([]);
+    const [filteredPlants, setFilteredPlants] = useState<PlantProps[]>([]);
     const [enviromentSelected, setEnvironmentSelected] = useState('all');
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -38,31 +38,33 @@ export function PlantSelect() {
         setEnvironmentSelected(enviroment)
 
         if (enviroment === 'all')
-            return setfilteredPlants(plants)
+            return setFilteredPlants(plants)
 
         const filtered = plants.filter(plant =>
             plant.environments.includes(enviroment)
         )
 
-        setfilteredPlants(filtered)
+        setFilteredPlants(filtered)
     }
 
 
     async function fetchPlants() {
-        const { data } = await api.get(`plants?_sort=name&_order=asc&_page=${page}&_limit=8`)
+        const { data } = await api.
+            get(`plants?_sort=name&_order=asc&_page=${page}&_limit=8`);
 
         if (!data)
-            return setLoading(true)
+            return setLoading(true);
 
         if (page > 1) {
             setPlants(oldValue => [...oldValue, ...data])
+            setFilteredPlants(oldValue => [...oldValue, ...data])
         } else {
             setPlants(data);
-            setfilteredPlants(data);
+            setFilteredPlants(data);
         }
 
-        setLoading(false)
-        setLoadingMore(false)
+        setLoading(false);
+        setLoadingMore(false);
     }
 
 
@@ -99,10 +101,9 @@ export function PlantSelect() {
         fetchPlants();
     }, [])
 
-
-
     if (loading)
         return <Load />
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
