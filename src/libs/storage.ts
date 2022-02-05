@@ -10,10 +10,10 @@ export interface PlantProps {
   water_tips: string;
   photo: string;
   environments: [string];
-  frequency: {
+  // frequency: {
     times: number;
     repeat_every: string;
-  };
+  // };
   dateTimeNotification: Date;
 }
 
@@ -29,7 +29,8 @@ export async function savePlant(plant: PlantProps): Promise<void> {
     const nexTime = new Date(plant.dateTimeNotification);
     const now = new Date();
 
-    const { times, repeat_every } = plant.frequency;
+    // const { times, repeat_every } = plant.frequency;
+    const { times, repeat_every } = plant;
     if (repeat_every === 'week') {
       const interval = Math.trunc(7 / times);
       nexTime.setDate(now.getDate() + interval);
