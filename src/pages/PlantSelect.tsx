@@ -14,6 +14,9 @@ import { Load } from "../components/Load";
 import { PlantCardPrimary } from "../components/PlantCardPrimary";
 import { PlantProps } from "../libs/storage";
 import api from "../services/api";
+import PlantsService from "../services/plant.service";
+import PlantsEnvironmentsService from "../services/plants_environments.service";
+import PlantsEnvironmentsPlantsService from "../services/plants_environments_plants.service";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
 
@@ -49,8 +52,38 @@ export function PlantSelect() {
 
 
     async function fetchPlants() {
-        const { data } = await api.
-            get(`plants?_sort=name&_order=asc&_page=${page}&_limit=8`);
+        var data: any[] = []
+            await PlantsService.findAllSortByName()
+            .then(async (response: any) => {
+                let futureData = {...response._array}
+                data = response._array
+                console.log("initial")
+                console.log(futureData)
+                for (var i = 0; i < data.length; i++){
+                    await PlantsEnvironmentsPlantsService.findEnvironmentsByPlantId(data[i].id)
+                        .then((response: any) => {
+                            let arrayOfEnvironments = []
+                            for (var i = 0; i < response._array.length; i++) {
+                                arrayOfEnvironments.push(response._array[i].key)
+                            }
+                            futureData[i] = {
+                                environments: arrayOfEnvironments,
+                                ...futureData[i]
+                            }
+                            // data[i].environments = arrayOfEnvironments
+                        }), (error: any) => {
+                            console.log(error);
+                        };
+                }
+                // console.log(data)
+                console.log("final")
+                console.log(futureData)
+            }), (error: any) => {
+                console.log(error);
+            };
+        
+        // const { data } = await api.
+            // get(`plants?_sort=name&_order=asc&_page=${page}&_limit=8`);
 
         if (!data)
             return setLoading(true);
@@ -83,15 +116,28 @@ export function PlantSelect() {
 
     useEffect(() => {
         async function fetchEnviroment() {
-            const { data } = await api.
-                get('plants_environments?_sort=title&_order=asc')
-            setEnviroment([
-                {
-                    key: 'all'
-                    , title: 'Todos'
-                },
-                ...data
-            ])
+            await PlantsEnvironmentsService.findAllSortByTitle()
+                .then((response: any) => {
+                    setEnviroment([
+                        {
+                            key: 'all'
+                            , title: 'Todos'
+                        },
+                        ...response._array
+                    ])
+                    }), (error: any) => {
+                        console.log(error);
+                    };
+                    
+            // const { data } = await api.
+            //     get('plants_environments?_sort=title&_order=asc')
+            // setEnviroment([
+            //     {
+            //         key: 'all'
+            //         , title: 'Todos'
+            //     },
+            //     ...data
+            // ])
         }
         fetchEnviroment();
     }, [])

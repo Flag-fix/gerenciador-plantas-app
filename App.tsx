@@ -13,6 +13,7 @@ import {
 }from '@expo-google-fonts/jost'
 import { PlantProps } from "./src/libs/storage";
 import DatabaseInit from "./src/services/database/database-init";
+import AnimalService from "./src/services/plant.service";
 
 export default function App() {
 
