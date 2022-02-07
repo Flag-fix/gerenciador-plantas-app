@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState} from "react";
 import AppLoading from "expo-app-loading";
 import * as Notifications from 'expo-notifications';
 import * as SQLite from 'expo-sqlite';
-
+import Firebase from "./src/firebase"
 import Routes from "./src/routes";
+import { StyleSheet, Text, View } from "react-native";
 
 import {
   useFonts,
@@ -16,6 +17,19 @@ import DatabaseInit from "./src/services/database/database-init";
 import AnimalService from "./src/services/plant.service";
 
 export default function App() {
+
+  const [dados, setDados] = useState([]);
+
+useEffect(() => {
+  Firebase.firestore()
+  .collection("gerenciador-plantas")
+  .get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      setDados([doc.data()]);
+    });
+});
+},[]);
 
 // useEffect(() => {
 //   Notifications.setNotificationHandler({
@@ -45,10 +59,10 @@ export default function App() {
 
 // }, [])
 
-  useEffect(() => {
-    console.log("useEffect")
-    new DatabaseInit
-  })
+  // useEffect(() => {
+  //   console.log("useEffect")
+  //   new DatabaseInit
+  // })
 
   const [fontsLoaded] = useFonts({
     Jost_400Regular,
@@ -60,7 +74,13 @@ export default function App() {
   }
 
   return (
-    <Routes />
-  )
-  
+    <><Routes />
+    {/* <View>
+      {dados.map((item) => {
+        return <Text>{item.nome}</Text>;
+      })}
+    </View> */}
+    
+    </>
+  );
 }
