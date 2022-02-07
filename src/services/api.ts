@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'http://192.168.1.8:3333'
+    baseURL: 'https://gerenciador-plantas-default-rtdb.firebaseio.com'
 });
 
 export default api;
